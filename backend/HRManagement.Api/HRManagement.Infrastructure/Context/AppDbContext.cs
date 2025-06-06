@@ -18,7 +18,7 @@ namespace HRManagement.Infrastructure.Context
             {
                 entity.HasIndex(u => u.Email).IsUnique();
                 entity.Property(p => p.IsAdmin)
-                    // Convert from bit to string
+                    /* Convert from bit to string */
                     .HasConversion(
                         v => v ? "true" : "false",
                         v => v == "true"

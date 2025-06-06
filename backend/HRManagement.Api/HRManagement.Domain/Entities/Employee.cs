@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace HRManagement.Domain.Entities
 {
@@ -29,7 +30,7 @@ namespace HRManagement.Domain.Entities
         [Required]
         public Guid DepartmentId { get; private set; }
 
-        public Department Department { get; private set; }
+        public Department Department { get; internal set; }
 
         /* For future: RefreshToken
         public string? RefreshToken { get; private set; }
@@ -38,6 +39,24 @@ namespace HRManagement.Domain.Entities
         */
 
         public Employee(
+            string name,
+            string email,
+            string hashedPassword,
+            string position,
+            DateOnly hireDate,
+            bool isAdmin,
+            Guid departmentId)
+        {
+            Name = name;
+            Email = email;
+            HashedPassword = hashedPassword;
+            Position = position;
+            HireDate = hireDate;
+            IsAdmin = isAdmin;
+            DepartmentId = departmentId;
+        }
+
+        public void Update(
             string name,
             string email,
             string hashedPassword,

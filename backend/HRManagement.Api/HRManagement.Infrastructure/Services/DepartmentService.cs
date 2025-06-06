@@ -1,40 +1,133 @@
 ﻿using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
+using HRManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace HRManagement.Infrastructure.Services
 {
     public class DepartmentService : IDepartmentService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
-        public DepartmentService(IUnitOfWork unitOfWork)
+        public DepartmentService(IUnitOfWork unitOfWork, ILogger logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
-        public Task<ResultDto<DepartmentDto>> AddAsync(DepartmentDto departmentDto)
+        public async Task<ResultDto<IEnumerable<DepartmentReturnDto>>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var departments = await _unitOfWork.Departments.GetAllAsync();
+                var result = departments.Select(d => new DepartmentReturnDto { Id = d.Id, Name = d.Name, Description = d.Description });
+                return ResultDto<IEnumerable<DepartmentReturnDto>>.Success(result, HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Server error");
+                return ResultDto<IEnumerable<DepartmentReturnDto>>.Failure(
+                    "Server error",
+                    HttpStatusCode.InternalServerError
+                );
+            }
         }
 
-        public Task<ResultDto<bool>> DeleteAsync(Guid id)
+        public async Task<ResultDto<DepartmentReturnDto>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var department = await _unitOfWork.Departments.GetByIdAsync(id);
+                if (department == null)
+                    return ResultDto<DepartmentReturnDto>.Failure("Department not found", HttpStatusCode.NotFound);
+                else
+                    return ResultDto<DepartmentReturnDto>.Success(
+                        new DepartmentReturnDto { Id = department.Id, Name = department.Name, Description = department.Description }, 
+                        HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Server error");
+                return ResultDto<DepartmentReturnDto>.Failure(
+                    "Server error",
+                    HttpStatusCode.InternalServerError
+                );
+            }
         }
 
-        public Task<ResultDto<IEnumerable<DepartmentDto>>> GetAllAsync()
+        public async Task<ResultDto<DepartmentReturnDto>> AddAsync(DepartmentRequestDto departmentDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var department = new Department(departmentDto.Name, departmentDto.Description);
+                await _unitOfWork.Departments.AddAsync(department);
+                await _unitOfWork.SaveChangesAsync();
+                return ResultDto<DepartmentReturnDto>.Success(
+                    new DepartmentReturnDto { Id = department.Id, Name = department.Name, Description = department.Description },
+                    HttpStatusCode.Created);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Server error");
+                return ResultDto<DepartmentReturnDto>.Failure(
+                    "Server error",
+                    HttpStatusCode.InternalServerError
+                );
+            }
         }
 
-        public Task<ResultDto<DepartmentDto>> GetByIdAsync(Guid id)
+        public async Task<ResultDto<DepartmentReturnDto>> UpdateAsync(Guid id, DepartmentRequestDto departmentDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var department = await _unitOfWork.Departments.GetByIdAsync(id);
+
+                if (department == null)
+                    return ResultDto<DepartmentReturnDto>.Failure("Department not found", HttpStatusCode.NotFound);
+
+                department.Update(departmentDto.Name, departmentDto.Description);
+                _unitOfWork.Departments.Update(department);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ResultDto<DepartmentReturnDto>.Success(
+                    new DepartmentReturnDto { Id = department.Id, Name = department.Name, Description = department.Description },
+                    HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Server error");
+                return ResultDto<DepartmentReturnDto>.Failure(
+                    "Server error",
+                    HttpStatusCode.InternalServerError
+                );
+            }
         }
 
-        public Task<ResultDto<DepartmentDto>> UpdateAsync(Guid id, DepartmentDto departmentDto)
+        public async Task<ResultDto<bool>> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var department = await _unitOfWork.Departments.GetByIdAsync(id);
+
+                if (department == null)
+                    return ResultDto<bool>.Failure("Department not found", HttpStatusCode.NotFound);
+
+                _unitOfWork.Departments.Delete(department);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ResultDto<bool>.Success(true, HttpStatusCode.NoContent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Server error");
+                return ResultDto<bool>.Failure(
+                    "Server error",
+                    HttpStatusCode.InternalServerError
+                );
+            }
         }
     }
 }

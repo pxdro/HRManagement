@@ -2,7 +2,7 @@
 
 namespace HRManagement.Application.DTOs
 {
-    public class DepartmentDto
+    public class DepartmentRequestDto
     {
         [Required]
         [MaxLength(150)]

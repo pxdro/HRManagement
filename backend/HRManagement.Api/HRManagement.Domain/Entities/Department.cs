@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace HRManagement.Domain.Entities
 {
@@ -11,9 +12,16 @@ namespace HRManagement.Domain.Entities
         [MaxLength(250)]
         public string? Description { get; private set; }
 
+        [JsonIgnore]
         public ICollection<Employee> Employees { get; private set; } = new List<Employee>();
 
         public Department(string name, string? description = null)
+        {
+            Name = name;
+            Description = description;
+        }
+
+        public void Update(string name, string? description = null)
         {
             Name = name;
             Description = description;

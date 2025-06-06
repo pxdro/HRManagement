@@ -1,8 +1,10 @@
 ﻿using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -12,17 +14,39 @@ namespace HRManagement.Infrastructure.Services
     {
         private readonly string _jwtSecret;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger _logger;
 
-        public AuthService(IUnitOfWork unitOfWork)
+        public AuthService(IUnitOfWork unitOfWork, ILogger logger)
         {
             _unitOfWork = unitOfWork;
             _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
                 ?? throw new InvalidOperationException("JWT_SECRET is missing.");
+            _logger = logger;
         }
 
-        public Task<ResultDto<string>> LoginAsync(LoginDto registerDto)
+        public async Task<ResultDto<string>> LoginAsync(LoginDto registerDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var users = await _unitOfWork.Employees.GetAllAsync();
+                var user = users.Where(u => u.Email == registerDto.Email).FirstOrDefault();
+                if (user == null)
+                    return ResultDto<string>.Failure("User not found", HttpStatusCode.NotFound);
+
+                if (!BCrypt.Net.BCrypt.Verify(registerDto.Password, user.HashedPassword))
+                    return ResultDto<string>.Failure("Invalid credentials", HttpStatusCode.Unauthorized);
+
+                var token = GenerateToken(user);
+                return ResultDto<string>.Success(token, HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Server error");
+                return ResultDto<string>.Failure(
+                    "Server error",
+                    HttpStatusCode.InternalServerError
+                );
+            }
         }
 
         public string GenerateToken(Employee employee)

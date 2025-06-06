@@ -2,6 +2,8 @@
 {
     public class EmployeeReturnDto
     {
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -14,6 +16,6 @@
 
         public Guid DepartmentId { get; set; }
 
-        public DepartmentDto Department { get; set; }
+        public DepartmentReturnDto Department { get; set; }
     }
 }
