@@ -5,6 +5,13 @@ namespace HRManagement.Infrastructure.Services
 {
     public class EmployeeService : IEmployeeService
     {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public EmployeeService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         public Task<ResultDto<EmployeeReturnDto>> AddAsync(EmployeeRequestDto employeeRequestDto)
         {
             throw new NotImplementedException();

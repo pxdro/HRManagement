@@ -1,11 +1,7 @@
-﻿using HRManagement.Domain.Entities;
-
-namespace HRManagement.Application.DTOs
+﻿namespace HRManagement.Application.DTOs
 {
     public class EmployeeReturnDto
     {
-        public Guid Id { get; set; }
-
         public string Name { get; set; }
 
         public string Email { get; set; }

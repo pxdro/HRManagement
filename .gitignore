@@ -17,3 +17,4 @@
 *.log
 .env*
 .vscode/
+Logs/

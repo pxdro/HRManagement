@@ -31,9 +31,11 @@ namespace HRManagement.Domain.Entities
 
         public Department Department { get; private set; }
 
+        /* For future: RefreshToken
         public string? RefreshToken { get; private set; }
 
         public DateTime? RefreshTokenExpiry { get; private set; }
+        */
 
         public Employee(
             string name,
@@ -51,12 +53,6 @@ namespace HRManagement.Domain.Entities
             HireDate = hireDate;
             IsAdmin = isAdmin;
             DepartmentId = departmentId;
-        }
-
-        public void UpdateRefreshToken(string refreshToken, DateTime expiry)
-        {
-            RefreshToken = refreshToken;
-            RefreshTokenExpiry = expiry;
         }
     }
 
