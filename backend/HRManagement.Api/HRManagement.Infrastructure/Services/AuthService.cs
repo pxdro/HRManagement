@@ -1,7 +1,9 @@
 ﻿using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -13,36 +15,42 @@ namespace HRManagement.Infrastructure.Services
     public class AuthService : IAuthService
     {
         private readonly string _jwtSecret;
+        private readonly string _issuer;
+        private readonly string _audience;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger _logger;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IUnitOfWork unitOfWork, ILogger logger)
+        public AuthService(IConfiguration configuration, IUnitOfWork unitOfWork, ILogger<AuthService> logger)
         {
-            _unitOfWork = unitOfWork;
-            _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
+            _jwtSecret = configuration["JWT_SECRET"]
                 ?? throw new InvalidOperationException("JWT_SECRET is missing.");
+            _issuer = configuration["JwtSettings:Issuer"]
+                ?? throw new InvalidOperationException("JWT Issuer is missing.");
+            _audience = configuration["JwtSettings:Audience"]
+                ?? throw new InvalidOperationException("JWT Audience is missing.");
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
-        public async Task<ResultDto<string>> LoginAsync(LoginDto registerDto)
+        public async Task<ResultDto<TokensDto>> LoginAsync(LoginDto registerDto)
         {
             try
             {
                 var users = await _unitOfWork.Employees.GetAllAsync();
                 var user = users.Where(u => u.Email == registerDto.Email).FirstOrDefault();
                 if (user == null)
-                    return ResultDto<string>.Failure("User not found", HttpStatusCode.NotFound);
+                    return ResultDto<TokensDto>.Failure("User not found", HttpStatusCode.NotFound);
 
                 if (!BCrypt.Net.BCrypt.Verify(registerDto.Password, user.HashedPassword))
-                    return ResultDto<string>.Failure("Invalid credentials", HttpStatusCode.Unauthorized);
+                    return ResultDto<TokensDto>.Failure("Invalid credentials", HttpStatusCode.Unauthorized);
 
                 var token = GenerateToken(user);
-                return ResultDto<string>.Success(token, HttpStatusCode.OK);
+                return ResultDto<TokensDto>.Success(new TokensDto { AuthToken = token }, HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Server error");
-                return ResultDto<string>.Failure(
+                return ResultDto<TokensDto>.Failure(
                     "Server error",
                     HttpStatusCode.InternalServerError
                 );
@@ -59,10 +67,11 @@ namespace HRManagement.Infrastructure.Services
                 new Claim(ClaimTypes.NameIdentifier, employee.Id.ToString()),
                 new Claim(ClaimTypes.Email, employee.Email),
                 new Claim(ClaimTypes.Role, employee.IsAdmin ? "Admin" : "Employee"),
-                employee.IsAdmin ? new Claim(ClaimTypes.Role, "Admin") : new Claim(ClaimTypes.Role, "Normal")
             };
 
             var token = new JwtSecurityToken(
+                issuer: _issuer,                 // ex: "HRManagement.Api"
+                audience: _audience,             // ex: "HRManagement.Client"
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds
@@ -70,5 +79,6 @@ namespace HRManagement.Infrastructure.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

@@ -10,7 +10,7 @@
 
         public string Position { get; set; }
 
-        public DateOnly HireDate { get; set; }
+        public DateTime HireDate { get; set; }
 
         public bool IsAdmin { get; set; }
 

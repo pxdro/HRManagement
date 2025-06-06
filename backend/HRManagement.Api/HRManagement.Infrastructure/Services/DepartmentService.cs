@@ -1,7 +1,6 @@
 ﻿using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
@@ -10,9 +9,9 @@ namespace HRManagement.Infrastructure.Services
     public class DepartmentService : IDepartmentService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger _logger;
+        private readonly ILogger<DepartmentService> _logger;
 
-        public DepartmentService(IUnitOfWork unitOfWork, ILogger logger)
+        public DepartmentService(IUnitOfWork unitOfWork, ILogger<DepartmentService> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;

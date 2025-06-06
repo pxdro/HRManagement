@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace HRManagement.Domain.Entities
 {
@@ -22,7 +21,7 @@ namespace HRManagement.Domain.Entities
         public string Position { get; private set; }
 
         [Required]
-        public DateOnly HireDate { get; private set; }
+        public DateTime HireDate { get; private set; }
 
         [Required]
         public bool IsAdmin { get; private set; }
@@ -30,7 +29,7 @@ namespace HRManagement.Domain.Entities
         [Required]
         public Guid DepartmentId { get; private set; }
 
-        public Department Department { get; internal set; }
+        public Department Department { get; internal set; } // Internal for tests
 
         /* For future: RefreshToken
         public string? RefreshToken { get; private set; }
@@ -43,7 +42,7 @@ namespace HRManagement.Domain.Entities
             string email,
             string hashedPassword,
             string position,
-            DateOnly hireDate,
+            DateTime hireDate,
             bool isAdmin,
             Guid departmentId)
         {
@@ -61,7 +60,7 @@ namespace HRManagement.Domain.Entities
             string email,
             string hashedPassword,
             string position,
-            DateOnly hireDate,
+            DateTime hireDate,
             bool isAdmin,
             Guid departmentId)
         {

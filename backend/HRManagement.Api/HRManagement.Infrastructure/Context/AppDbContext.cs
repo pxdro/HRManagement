@@ -17,6 +17,7 @@ namespace HRManagement.Infrastructure.Context
             modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasIndex(u => u.Email).IsUnique();
+
                 entity.Property(p => p.IsAdmin)
                     /* Convert from bit to string */
                     .HasConversion(

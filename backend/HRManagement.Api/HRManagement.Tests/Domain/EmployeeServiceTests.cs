@@ -124,7 +124,7 @@ namespace HRManagement.Tests.Domain
                 Email = "pedro@test.com", 
                 Password = "AnyPass123", 
                 Position = "Software Engineer", 
-                HireDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1)), 
+                HireDate = DateTime.UtcNow.AddYears(-1), 
                 IsAdmin = true, 
                 DepartmentId = emp.Department.Id
             };
@@ -154,7 +154,7 @@ namespace HRManagement.Tests.Domain
                 Email = "pedro@test.com", 
                 Password = "AnyPass123", 
                 Position = "Software Engineer", 
-                HireDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1)), 
+                HireDate = DateTime.UtcNow.AddYears(-1), 
                 IsAdmin = true, 
                 DepartmentId = emp.Department.Id };
 
@@ -193,7 +193,7 @@ namespace HRManagement.Tests.Domain
         public async Task DeleteAsync_Existing_ReturnsNoContent()
         {
             // Arrange
-            var emp = new Employee("Pedro", "pedro@test.com", "H4sh3DP@ss!", "Software Engineer", DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1)), true, Guid.NewGuid());
+            var emp = new Employee("Pedro", "pedro@test.com", "H4sh3DP@ss!", "Software Engineer", DateTime.UtcNow.AddYears(-1), true, Guid.NewGuid());
             _uowMock.Setup(u => u.Employees.GetByIdAsync(emp.Id, null)).ReturnsAsync(emp);
             _uowMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
 
@@ -227,7 +227,7 @@ namespace HRManagement.Tests.Domain
         private Employee CreateEmployee(string name = "Pedro")
         {
             var dept = new Department("IT", "Information Tech");
-            return new Employee(name, $"{name.ToLower()}@test.com", "pass", "SE", DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1)), true, dept.Id)
+            return new Employee(name, $"{name.ToLower()}@test.com", "pass", "SE", DateTime.UtcNow.AddYears(-1), true, dept.Id)
             {
                 Department = dept
             };

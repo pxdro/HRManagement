@@ -10,9 +10,9 @@ namespace HRManagement.Infrastructure.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger _logger;
+        private readonly ILogger<EmployeeService> _logger;
 
-        public EmployeeService(IUnitOfWork unitOfWork, ILogger logger)
+        public EmployeeService(IUnitOfWork unitOfWork, ILogger<EmployeeService> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -142,7 +142,6 @@ namespace HRManagement.Infrastructure.Services
                         HireDate = employee.HireDate,
                         IsAdmin = employee.IsAdmin,
                         DepartmentId = employee.DepartmentId,
-                        Department = new DepartmentReturnDto { Name = employee.Department.Name, Description = employee.Department.Description }
                     },
                     HttpStatusCode.OK);
             }
