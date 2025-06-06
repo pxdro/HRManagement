@@ -1,0 +1,11 @@
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\bin\Debug\net7.0\HRManagement.Application.deps.json
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\bin\Debug\net7.0\HRManagement.Application.dll
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\bin\Debug\net7.0\HRManagement.Application.pdb
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\HRManagement.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\HRManagement.Application.AssemblyInfoInputs.cache
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\HRManagement.Application.AssemblyInfo.cs
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\HRManagement.Application.csproj.CoreCompileInputs.cache
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\HRManagement.Application.dll
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\refint\HRManagement.Application.dll
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\HRManagement.Application.pdb
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Application\obj\Debug\net7.0\ref\HRManagement.Application.dll

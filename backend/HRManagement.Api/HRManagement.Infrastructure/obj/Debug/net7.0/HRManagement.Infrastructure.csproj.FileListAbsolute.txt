@@ -1,0 +1,11 @@
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\bin\Debug\net7.0\HRManagement.Infrastructure.deps.json
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\bin\Debug\net7.0\HRManagement.Infrastructure.dll
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\bin\Debug\net7.0\HRManagement.Infrastructure.pdb
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\HRManagement.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\HRManagement.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\HRManagement.Infrastructure.AssemblyInfo.cs
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\HRManagement.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\HRManagement.Infrastructure.dll
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\refint\HRManagement.Infrastructure.dll
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\HRManagement.Infrastructure.pdb
+C:\Users\Pedro\Documents\Projetos\HRManagement\backend\HRManagement.Api\HRManagement.Infrastructure\obj\Debug\net7.0\ref\HRManagement.Infrastructure.dll
