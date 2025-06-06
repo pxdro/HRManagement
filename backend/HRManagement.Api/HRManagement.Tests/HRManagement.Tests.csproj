@@ -25,4 +25,8 @@
     <Folder Include="Integration\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HRManagement.Api\HRManagement.Api.csproj" />
+  </ItemGroup>
+
 </Project>
