@@ -1,0 +1,64 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div>
+    <label for="name">Name</label>
+    <input id="name" formControlName="name" />
+    <div *ngIf="f.name.touched && f.name.invalid" style="color: red;">
+      Name is required.
+    </div>
+  </div>
+
+  <div>
+    <label for="email">Email</label>
+    <input id="email" formControlName="email" />
+    <div *ngIf="f.email.touched && f.email.invalid" style="color: red;">
+      <div *ngIf="f.email.errors?.['required']">Email is required.</div>
+      <div *ngIf="f.email.errors?.['email']">Email format is invalid.</div>
+    </div>
+  </div>
+
+  <div>
+    <label for="password">Password</label>
+    <input id="password" formControlName="password" />
+    <div *ngIf="f.password.touched && f.password.invalid" style="color: red;">
+      Password is required.
+    </div>
+  </div>
+
+  <div>
+    <label for="position">Position</label>
+    <input id="position" formControlName="position" />
+    <div *ngIf="f.position.touched && f.position.invalid" style="color: red;">
+      Position is required.
+    </div>
+  </div>
+
+  <div>
+    <label for="hireDate">Hire Date</label>
+    <input id="hireDate" type="date" formControlName="hireDate" />
+    <div *ngIf="f.hireDate.touched && f.hireDate.invalid" style="color: red;">
+      Hire Date is required.
+    </div>
+  </div>
+
+  <div>
+    <label for="isAdmin">
+      <input id="isAdmin" type="checkbox" formControlName="isAdmin" /> Is Admin
+    </label>
+  </div>
+
+  <div>
+    <label for="departmentId">Department</label>
+    <select id="departmentId" formControlName="departmentId">
+      <option value="">Select department</option>
+      <option *ngFor="let dept of (departments$ | async)" [value]="dept.id">
+        {{ dept.name }}
+      </option>
+    </select>
+    <div *ngIf="f.departmentId.touched && f.departmentId.invalid" style="color: red;">
+      Department is required.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="form.invalid">{{ isEditMode ? 'Update' : 'Create' }} Employee</button>
+  <button type="button" (click)="onCancel()">Cancel</button>
+</form>

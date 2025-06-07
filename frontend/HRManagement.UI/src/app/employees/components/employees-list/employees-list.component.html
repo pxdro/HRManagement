@@ -1,0 +1,13 @@
+<div>
+  <button (click)="onAdd()">Add Employee</button>
+</div>
+
+<div *ngIf="loading$ | async">Loading...</div>
+
+<ul *ngIf="(employees$ | async) as employees">
+  <li *ngFor="let e of employees">
+    {{ e.name }} – {{ e.email }} – {{ e.position }} ({{ e.department.name }})
+    <button (click)="onEdit(e.id)">Edit</button>
+    <button (click)="onDelete(e.id)">Delete</button>
+  </li>
+</ul>

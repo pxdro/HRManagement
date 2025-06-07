@@ -25,7 +25,7 @@ namespace HRManagement.Infrastructure.Services
                 var employees = await _unitOfWork.Employees.GetAllAsync(query => query.Include(e => e.Department));
                 var result = employees.Select(e => new EmployeeReturnDto 
                     { Id = e.Id, Name = e.Name, Email = e.Email, Position = e.Position, HireDate = e.HireDate, IsAdmin = e.IsAdmin, DepartmentId = e.DepartmentId,
-                      Department = new DepartmentReturnDto { Name = e.Department.Name, Description = e.Department.Description }
+                      Department = new DepartmentReturnDto { Id = e.Department.Id, Name = e.Department.Name, Description = e.Department.Description }
                     });
                 return ResultDto<IEnumerable<EmployeeReturnDto>>.Success(result, HttpStatusCode.OK);
             }
@@ -57,7 +57,7 @@ namespace HRManagement.Infrastructure.Services
                             HireDate = employee.HireDate,
                             IsAdmin = employee.IsAdmin,
                             DepartmentId = employee.DepartmentId,
-                            Department = new DepartmentReturnDto { Name = employee.Department.Name, Description = employee.Department.Description }
+                            Department = new DepartmentReturnDto { Id = employee.Department.Id, Name = employee.Department.Name, Description = employee.Department.Description }
                         },
                         HttpStatusCode.OK);
             }

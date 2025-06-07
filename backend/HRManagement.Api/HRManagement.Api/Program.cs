@@ -38,6 +38,17 @@ try
            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
            .AddEnvironmentVariables();
 
+    // CORS Policies
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DevelopmentPolicies", policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    });
+
     // JWT Auth Settings
     var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
         ?? throw new InvalidOperationException("JWT_SECRET not configured");
@@ -114,6 +125,7 @@ try
         // Swagger
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.UseCors("DevelopmentPolicies");
     }
 
     app.UseHttpsRedirection();
