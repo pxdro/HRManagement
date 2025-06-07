@@ -1,4 +1,5 @@
-﻿using HRManagement.Application.DTOs;
+﻿using AutoMapper;
+using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +12,13 @@ namespace HRManagement.Infrastructure.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<EmployeeService> _logger;
+        private readonly IMapper _mapper;
 
-        public EmployeeService(IUnitOfWork unitOfWork, ILogger<EmployeeService> logger)
+        public EmployeeService(IUnitOfWork unitOfWork, ILogger<EmployeeService> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResultDto<IEnumerable<EmployeeReturnDto>>> GetAllAsync()
@@ -23,11 +26,9 @@ namespace HRManagement.Infrastructure.Services
             try
             {
                 var employees = await _unitOfWork.Employees.GetAllAsync(query => query.Include(e => e.Department));
-                var result = employees.Select(e => new EmployeeReturnDto 
-                    { Id = e.Id, Name = e.Name, Email = e.Email, Position = e.Position, HireDate = e.HireDate, IsAdmin = e.IsAdmin, DepartmentId = e.DepartmentId,
-                      Department = new DepartmentReturnDto { Id = e.Department.Id, Name = e.Department.Name, Description = e.Department.Description }
-                    });
-                return ResultDto<IEnumerable<EmployeeReturnDto>>.Success(result, HttpStatusCode.OK);
+                return ResultDto<IEnumerable<EmployeeReturnDto>>.Success(
+                    _mapper.Map<IEnumerable<EmployeeReturnDto>>(employees), 
+                    HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
@@ -48,17 +49,7 @@ namespace HRManagement.Infrastructure.Services
                     return ResultDto<EmployeeReturnDto>.Failure("Employee not found", HttpStatusCode.NotFound);
                 else
                     return ResultDto<EmployeeReturnDto>.Success(
-                        new EmployeeReturnDto
-                        {
-                            Id = employee.Id,
-                            Name = employee.Name,
-                            Email = employee.Email,
-                            Position = employee.Position,
-                            HireDate = employee.HireDate,
-                            IsAdmin = employee.IsAdmin,
-                            DepartmentId = employee.DepartmentId,
-                            Department = new DepartmentReturnDto { Id = employee.Department.Id, Name = employee.Department.Name, Description = employee.Department.Description }
-                        },
+                        _mapper.Map<EmployeeReturnDto>(employee), 
                         HttpStatusCode.OK);
             }
             catch (Exception ex)
@@ -87,17 +78,9 @@ namespace HRManagement.Infrastructure.Services
                 );
                 await _unitOfWork.Employees.AddAsync(employee);
                 await _unitOfWork.SaveChangesAsync();
+
                 return ResultDto<EmployeeReturnDto>.Success(
-                    new EmployeeReturnDto
-                    {
-                        Id = employee.Id,
-                        Name = employee.Name,
-                        Email = employee.Email,
-                        Position = employee.Position,
-                        HireDate = employee.HireDate,
-                        IsAdmin = employee.IsAdmin,
-                        DepartmentId = employee.DepartmentId,
-                    },
+                    _mapper.Map<EmployeeReturnDto>(employee), 
                     HttpStatusCode.Created);
             }
             catch (Exception ex)
@@ -133,16 +116,7 @@ namespace HRManagement.Infrastructure.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 return ResultDto<EmployeeReturnDto>.Success(
-                    new EmployeeReturnDto
-                    {
-                        Id = employee.Id,
-                        Name = employee.Name,
-                        Email = employee.Email,
-                        Position = employee.Position,
-                        HireDate = employee.HireDate,
-                        IsAdmin = employee.IsAdmin,
-                        DepartmentId = employee.DepartmentId,
-                    },
+                    _mapper.Map<EmployeeReturnDto>(employee), 
                     HttpStatusCode.OK);
             }
             catch (Exception ex)

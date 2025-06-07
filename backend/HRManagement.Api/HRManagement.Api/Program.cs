@@ -1,5 +1,6 @@
 using DotNetEnv;
 using HRManagement.Application.Interfaces;
+using HRManagement.Application.Profiles;
 using HRManagement.Domain.Entities;
 using HRManagement.Infrastructure.Context;
 using HRManagement.Infrastructure.Repository;
@@ -89,6 +90,7 @@ try
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddAutoMapper(typeof(MapperProfile));
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new() { Title = "HRManagement API", Version = "v1" });

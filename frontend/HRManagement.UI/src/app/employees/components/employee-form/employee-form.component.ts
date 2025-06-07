@@ -14,6 +14,7 @@ import { EmployeeFormControls } from 'src/app/shared/models/formsControl.model';
 @Component({
   selector: 'app-employee-form',
   templateUrl: './employee-form.component.html',
+  styleUrls: ['./employee-form.component.scss']
 })
 export class EmployeeFormComponent implements OnInit {
   form!: FormGroup;
@@ -66,10 +67,10 @@ export class EmployeeFormComponent implements OnInit {
 
   private initForm() {
     this.form = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', Validators.required, Validators.maxLength(150)],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      position: ['', Validators.required],
+      position: ['', Validators.required, Validators.maxLength(150)],
       hireDate: ['', Validators.required],
       isAdmin: [false],
       departmentId: ['', Validators.required],

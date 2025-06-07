@@ -1,0 +1,15 @@
+<mat-toolbar color="primary" class="topnav-toolbar">
+  <span class="app-name" (click)="redirectHome()">HR Management</span>
+
+  <span class="spacer"></span>
+
+  <button mat-button (click)="redirectEmployees()">Employees</button>
+  <button mat-button (click)="redirectDepartments()">Departments</button>
+
+  <span class="spacer"></span>
+
+  <span *ngIf="userEmail" class="user-email">{{ userEmail }}</span>
+  <button mat-icon-button (click)="logout()" matTooltip="Logout">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

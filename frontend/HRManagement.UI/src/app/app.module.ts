@@ -9,6 +9,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SharedModule } from "./shared/shared.module";
 
 @NgModule({
   declarations: [
@@ -21,8 +23,10 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     StoreRouterConnectingModule.forRoot(),
-    HttpClientModule
-  ],
+    HttpClientModule,
+    BrowserAnimationsModule,
+    SharedModule
+],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],

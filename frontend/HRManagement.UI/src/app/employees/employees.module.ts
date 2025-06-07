@@ -10,6 +10,7 @@ import { EmployeesListComponent } from './components/employees-list/employees-li
 import { EmployeeFormComponent } from './components/employee-form/employee-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DepartmentsModule } from '../departments/departments.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { DepartmentsModule } from '../departments/departments.module';
     DepartmentsModule,
     StoreModule.forFeature('employees', employeeReducer),
     EffectsModule.forFeature([EmployeeEffects]),
-    ReactiveFormsModule 
+    ReactiveFormsModule,
+    SharedModule
   ],
   declarations: [
     EmployeesListComponent,

@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-employees-list',
-  templateUrl: './employees-list.component.html'
+  templateUrl: './employees-list.component.html',
+  styleUrls: ['./employees-list.component.scss']
 })
 export class EmployeesListComponent implements OnInit {
   employees$ = this.store.select(selectAllEmployees);
@@ -26,8 +27,8 @@ export class EmployeesListComponent implements OnInit {
     this.router.navigate([`/employees/${id}/edit`]);
   }
 
-  onDelete(id: string) {
-    if (confirm('Are you sure you want to delete this employee?')) {
+  onDelete(name: string, id: string) {
+    if (confirm(`Are you sure you want to delete the employee ${name}?`)) {
       this.store.dispatch(deleteEmployee({ id }));
     }
   }

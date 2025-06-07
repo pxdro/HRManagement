@@ -1,6 +1,8 @@
-﻿using HRManagement.Application.DTOs;
+﻿using AutoMapper;
+using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
@@ -10,11 +12,13 @@ namespace HRManagement.Infrastructure.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<DepartmentService> _logger;
+        private readonly IMapper _mapper;
 
-        public DepartmentService(IUnitOfWork unitOfWork, ILogger<DepartmentService> logger)
+        public DepartmentService(IUnitOfWork unitOfWork, ILogger<DepartmentService> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResultDto<IEnumerable<DepartmentReturnDto>>> GetAllAsync()
@@ -22,8 +26,9 @@ namespace HRManagement.Infrastructure.Services
             try
             {
                 var departments = await _unitOfWork.Departments.GetAllAsync();
-                var result = departments.Select(d => new DepartmentReturnDto { Id = d.Id, Name = d.Name, Description = d.Description });
-                return ResultDto<IEnumerable<DepartmentReturnDto>>.Success(result, HttpStatusCode.OK);
+                return ResultDto<IEnumerable<DepartmentReturnDto>>.Success(
+                    _mapper.Map<IEnumerable<DepartmentReturnDto>>(departments), 
+                    HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
@@ -44,7 +49,7 @@ namespace HRManagement.Infrastructure.Services
                     return ResultDto<DepartmentReturnDto>.Failure("Department not found", HttpStatusCode.NotFound);
                 else
                     return ResultDto<DepartmentReturnDto>.Success(
-                        new DepartmentReturnDto { Id = department.Id, Name = department.Name, Description = department.Description }, 
+                        _mapper.Map<DepartmentReturnDto>(department), 
                         HttpStatusCode.OK);
             }
             catch (Exception ex)
@@ -65,7 +70,7 @@ namespace HRManagement.Infrastructure.Services
                 await _unitOfWork.Departments.AddAsync(department);
                 await _unitOfWork.SaveChangesAsync();
                 return ResultDto<DepartmentReturnDto>.Success(
-                    new DepartmentReturnDto { Id = department.Id, Name = department.Name, Description = department.Description },
+                    _mapper.Map<DepartmentReturnDto>(department),
                     HttpStatusCode.Created);
             }
             catch (Exception ex)
@@ -92,7 +97,7 @@ namespace HRManagement.Infrastructure.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 return ResultDto<DepartmentReturnDto>.Success(
-                    new DepartmentReturnDto { Id = department.Id, Name = department.Name, Description = department.Description },
+                    _mapper.Map<DepartmentReturnDto>(department),
                     HttpStatusCode.OK);
             }
             catch (Exception ex)

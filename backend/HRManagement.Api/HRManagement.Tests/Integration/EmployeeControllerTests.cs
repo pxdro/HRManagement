@@ -62,6 +62,7 @@ namespace HRManagement.Tests.Integration
             var result = await response.Content.ReadFromJsonAsync<ResultDto<IEnumerable<EmployeeReturnDto>>>();
             result.Should().NotBeNull();
             result.Data.Should().NotBeNull();
+            result.Data.First().Department.Should().NotBeNull();
 
             /* Create */
             // Arrange
@@ -115,6 +116,7 @@ namespace HRManagement.Tests.Integration
             getByIdResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             var getById = await getByIdResponse.Content.ReadFromJsonAsync<ResultDto<EmployeeReturnDto>>();
             getById.Data.Name.Should().Be(updateDto.Name);
+            getById.Data.Department.Should().NotBeNull();
 
             /* Delete */
             // Act

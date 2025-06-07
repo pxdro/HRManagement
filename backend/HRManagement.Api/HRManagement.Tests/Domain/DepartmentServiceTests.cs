@@ -1,10 +1,11 @@
-﻿using System.Net;
+﻿using AutoMapper;
 using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
 using HRManagement.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Net;
 
 namespace HRManagement.Tests.Domain
 {
@@ -13,12 +14,32 @@ namespace HRManagement.Tests.Domain
         private readonly DepartmentService _service;
         private readonly Mock<IUnitOfWork> _uowMock;
         private readonly Mock<ILogger<DepartmentService>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
 
         public DepartmentServiceTests()
         {
             _uowMock = new Mock<IUnitOfWork>();
+
             _loggerMock = new Mock<ILogger<DepartmentService>>();
-            _service = new DepartmentService(_uowMock.Object, _loggerMock.Object);
+
+            _mapperMock = new Mock<IMapper>();
+            _mapperMock.Setup(x => x.Map<IEnumerable<DepartmentReturnDto>>(It.IsAny<IEnumerable<Department>>()))
+                .Returns((IEnumerable<Department> source) =>
+                    source.Select(d => new DepartmentReturnDto
+                    {
+                        Id = d.Id,
+                        Name = d.Name,
+                        Description = d.Description,
+                    }));
+            _mapperMock.Setup(x => x.Map<DepartmentReturnDto>(It.IsAny<Department>()))
+                .Returns((Department source) => new DepartmentReturnDto
+                {
+                    Id = source.Id,
+                    Name = source.Name,
+                    Description = source.Description,
+                });
+
+            _service = new DepartmentService(_uowMock.Object, _loggerMock.Object, _mapperMock.Object);
         }
 
         [Fact]

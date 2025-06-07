@@ -70,8 +70,8 @@ namespace HRManagement.Infrastructure.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer: _issuer,                 // ex: "HRManagement.Api"
-                audience: _audience,             // ex: "HRManagement.Client"
+                issuer: _issuer,
+                audience: _audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds

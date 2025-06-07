@@ -1,8 +1,8 @@
-﻿using HRManagement.Application.DTOs;
+﻿using HRManagement.Api.Shared;
+using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace HRManagement.Api.Controllers
 {
@@ -26,7 +26,7 @@ namespace HRManagement.Api.Controllers
         {
             _logger.LogInformation($"GET {nameof(GetAll)} called");
             var result = await _service.GetAllAsync();
-            LogResult("GET", nameof(GetAll), result);
+            _logger.LogResult("GET", nameof(GetAll), result);
             return StatusCode((int)result.StatusCode, result);
         }
 
@@ -39,7 +39,7 @@ namespace HRManagement.Api.Controllers
         {
             _logger.LogInformation($"GET {nameof(GetById)} called");
             var result = await _service.GetByIdAsync(id);
-            LogResult("GET", nameof(GetById), result);
+            _logger.LogResult("GET", nameof(GetById), result);
             return StatusCode((int)result.StatusCode, result);
         }
 
@@ -52,7 +52,7 @@ namespace HRManagement.Api.Controllers
         {
             _logger.LogInformation($"POST {nameof(Create)} called");
             var result = await _service.AddAsync(dto);
-            LogResult("POST", nameof(Create), result);
+            _logger.LogResult("POST", nameof(Create), result);
             return StatusCode((int)result.StatusCode, result);
         }
 
@@ -66,7 +66,7 @@ namespace HRManagement.Api.Controllers
         {
             _logger.LogInformation($"PUT {nameof(Update)} called");
             var result = await _service.UpdateAsync(id, dto);
-            LogResult("PUT", nameof(Update), result);
+            _logger.LogResult("PUT", nameof(Update), result);
             return StatusCode((int)result.StatusCode, result);
         }
 
@@ -80,18 +80,8 @@ namespace HRManagement.Api.Controllers
         {
             _logger.LogInformation($"DELETE {nameof(Delete)} called");
             var result = await _service.DeleteAsync(id);
-            LogResult<bool>("DELETE", nameof(Delete), result);
+            _logger.LogResult("DELETE", nameof(Delete), result);
             return StatusCode((int)result.StatusCode, result);
-        }
-
-        private void LogResult<T>(string method, string action, ResultDto<T> result)
-        {
-            if (result.StatusCode == HttpStatusCode.InternalServerError)
-                _logger.LogError("{Method} {Action} internal error with message {ErrorMessage}", method, action, result.ErrorMessage);
-            else if (result.IsSuccess)
-                _logger.LogInformation("{Method} {Action} succeeded with code {StatusCode} and data {@Data}", method, action, (int)result.StatusCode, result.Data);
-            else
-                _logger.LogInformation("{Method} {Action} failed with code {StatusCode} and message {ErrorMessage}", method, action, (int)result.StatusCode, result.ErrorMessage);
         }
     }
 }

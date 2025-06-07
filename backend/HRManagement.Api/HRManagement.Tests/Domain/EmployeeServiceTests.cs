@@ -1,4 +1,5 @@
-﻿using HRManagement.Application.DTOs;
+﻿using AutoMapper;
+using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
 using HRManagement.Infrastructure.Services;
@@ -13,12 +14,43 @@ namespace HRManagement.Tests.Domain
         private readonly EmployeeService _service;
         private readonly Mock<IUnitOfWork> _uowMock;
         private readonly Mock<ILogger<EmployeeService>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
 
         public EmployeeServiceTests()
         {
             _uowMock = new Mock<IUnitOfWork>();
+
             _loggerMock = new Mock<ILogger<EmployeeService>>();
-            _service = new EmployeeService(_uowMock.Object, _loggerMock.Object);
+
+            _mapperMock = new Mock<IMapper>();
+            _mapperMock.Setup(x => x.Map<IEnumerable<EmployeeReturnDto>>(It.IsAny<IEnumerable<Employee>>()))
+                .Returns((IEnumerable<Employee> source) =>
+                    source.Select(d => new EmployeeReturnDto
+                    {
+                        Id = d.Id,
+                        Name = d.Name,
+                        Email = d.Email,
+                        Position = d.Email,
+                        HireDate = d.HireDate,
+                        IsAdmin = d.IsAdmin,
+                        DepartmentId = d.DepartmentId,
+                        Department = new DepartmentReturnDto { Id = d.Department.Id, Name = d.Department.Name, Description = d.Department.Description }
+                    }));
+            _mapperMock.Setup(x => x.Map<EmployeeReturnDto>(It.IsAny<Employee>()))
+                .Returns((Employee source) => new EmployeeReturnDto
+                {
+                    Id = source.Id,
+                    Name = source.Name,
+                    Email = source.Email,
+                    Position = source.Email,
+                    HireDate = source.HireDate,
+                    IsAdmin = source.IsAdmin,
+                    DepartmentId = source.DepartmentId,
+                    Department = source.Department == null ? null
+                        : new DepartmentReturnDto { Id = source.Department.Id, Name = source.Department.Name, Description = source.Department.Description }
+                });
+
+            _service = new EmployeeService(_uowMock.Object, _loggerMock.Object, _mapperMock.Object);
         }
 
         [Fact]
@@ -39,6 +71,7 @@ namespace HRManagement.Tests.Domain
             Assert.True(result.IsSuccess);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.NotNull(result.Data);
+            Assert.NotNull(result.Data.First().Department);
             Assert.Single(result.Data);
             Assert.Null(result.ErrorMessage);
             Assert.Equal("Pedro", result.Data.First().Name);
@@ -88,6 +121,7 @@ namespace HRManagement.Tests.Domain
             Assert.True(result.IsSuccess);
             Assert.Equal(HttpStatusCode.OK, result.StatusCode);
             Assert.NotNull(result.Data);
+            Assert.NotNull(result.Data.Department);
             Assert.Null(result.ErrorMessage);
             Assert.Equal("Pedro", result.Data.Name);
         }

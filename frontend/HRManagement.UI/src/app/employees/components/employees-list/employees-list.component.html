@@ -1,13 +1,30 @@
-<div>
-  <button (click)="onAdd()">Add Employee</button>
+<div class="employee-header">
+  <h2>Employees</h2>
+  <button mat-raised-button color="primary" (click)="onAdd()">
+    <mat-icon>person_add</mat-icon>
+    Add Employee
+  </button>
 </div>
 
-<div *ngIf="loading$ | async">Loading...</div>
+<div *ngIf="loading$ | async" class="loading">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
 
-<ul *ngIf="(employees$ | async) as employees">
-  <li *ngFor="let e of employees">
-    {{ e.name }} – {{ e.email }} – {{ e.position }} ({{ e.department.name }})
-    <button (click)="onEdit(e.id)">Edit</button>
-    <button (click)="onDelete(e.id)">Delete</button>
-  </li>
-</ul>
+<div *ngIf="(employees$ | async) as employees">
+  <mat-card *ngFor="let e of employees" class="employee-card">
+    <mat-card-title>{{ e.name }}</mat-card-title>
+    <mat-card-content>
+      <p><strong>Email:</strong> {{ e.email }}</p>
+      <p><strong>Position:</strong> {{ e.position }}</p>
+      <p><strong>Department:</strong> {{ e.department.name }}</p>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-icon-button color="accent" (click)="onEdit(e.id)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="onDelete(e.name, e.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -1,0 +1,23 @@
+.topnav-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user-email {
+  margin-right: 8px;
+  font-size: 0.8rem;
+  color: white;
+}

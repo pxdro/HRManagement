@@ -1,8 +1,8 @@
-﻿using HRManagement.Application.DTOs;
+﻿using HRManagement.Api.Shared;
+using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace HRManagement.Api.Controllers
 {
@@ -29,18 +29,8 @@ namespace HRManagement.Api.Controllers
         {
             _logger.LogInformation($"POST {nameof(Login)} called");
             var result = await _service.LoginAsync(loginDto);
-            LogResult("POST", "/api/auth/login", result);
+            _logger.LogResult("POST", "/api/auth/login", result);
             return StatusCode((int)result.StatusCode, result);
-        }
-
-        private void LogResult<T>(string method, string action, ResultDto<T> result)
-        {
-            if (result.StatusCode == HttpStatusCode.InternalServerError)
-                _logger.LogError("{Method} {Action} internal error with message {ErrorMessage}", method, action, result.ErrorMessage);
-            else if (result.IsSuccess)
-                _logger.LogInformation("{Method} {Action} succeeded with code {StatusCode} and data {@Data}", method, action, (int)result.StatusCode, result.Data);
-            else
-                _logger.LogInformation("{Method} {Action} failed with code {StatusCode} and message {ErrorMessage}", method, action, (int)result.StatusCode, result.ErrorMessage);
         }
     }
 }
