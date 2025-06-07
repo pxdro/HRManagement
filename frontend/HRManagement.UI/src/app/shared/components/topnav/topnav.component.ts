@@ -10,12 +10,10 @@ import { AuthService } from 'src/app/core/services/auth.service';
 export class TopnavComponent {
   userEmail: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {
-    this.userEmail = this.authService.getUserEmail();
-  }
+  constructor(private authService: AuthService, private router: Router) {}
 
-  redirectHome(){
-    this.router.navigate(['/']);
+  ngOnInit() {
+    this.userEmail = this.authService.getUserEmail();
   }
 
   redirectEmployees(){

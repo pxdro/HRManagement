@@ -5,17 +5,17 @@ import { of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { provideMockStore } from '@ngrx/store/testing';
 
-import { EmployeeFormComponent } from './employee-form.component';
+import { DepartmentFormComponent } from './department-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-describe('EmployeeFormComponent', () => {
-  let component: EmployeeFormComponent;
-  let fixture: ComponentFixture<EmployeeFormComponent>;
+describe('DepartmentFormComponent', () => {
+  let component: DepartmentFormComponent;
+  let fixture: ComponentFixture<DepartmentFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EmployeeFormComponent],
+      declarations: [DepartmentFormComponent],
       imports: [ReactiveFormsModule, RouterTestingModule, SharedModule, BrowserAnimationsModule, NoopAnimationsModule],
       providers: [
         provideMockStore({
@@ -32,7 +32,7 @@ describe('EmployeeFormComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EmployeeFormComponent);
+    fixture = TestBed.createComponent(DepartmentFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

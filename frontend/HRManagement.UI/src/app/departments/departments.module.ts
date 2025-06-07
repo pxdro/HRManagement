@@ -7,6 +7,9 @@ import { EffectsModule } from '@ngrx/effects';
 import { departmentReducer } from './state/department.reducer';
 import { DepartmentEffects } from './state/department.effects';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DepartmentsListComponent } from './components/departments-list/departments-list.component';
+import { DepartmentFormComponent } from './components/department-form/department-form.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -15,8 +18,12 @@ import { ReactiveFormsModule } from '@angular/forms';
     DepartmentsRoutingModule,
     StoreModule.forFeature('departments', departmentReducer),
     EffectsModule.forFeature([DepartmentEffects]),
-    ReactiveFormsModule 
+    ReactiveFormsModule,
+    SharedModule
   ],
-  declarations: []
+  declarations: [
+    DepartmentsListComponent,
+    DepartmentFormComponent
+  ]
 })
 export class DepartmentsModule { }

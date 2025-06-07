@@ -1,0 +1,28 @@
+<div class="department-header">
+  <h2>Departments</h2>
+  <button mat-raised-button color="primary" (click)="onAdd()">
+    <mat-icon>person_add</mat-icon>
+    Add Department
+  </button>
+</div>
+
+<div *ngIf="loading$ | async" class="loading">
+  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<div *ngIf="(departments$ | async) as departments">
+  <mat-card *ngFor="let d of departments" class="department-card">
+    <mat-card-title>{{ d.name }}</mat-card-title>
+    <mat-card-content>
+      <p><strong>Description:</strong> {{ d.description }}</p>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-icon-button color="accent" (click)="onEdit(d.id)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="onDelete(d.name, d.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
