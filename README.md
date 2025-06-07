@@ -1,7 +1,7 @@
 **HRManagement Application**
 
 This repository contains the HRManagement full-stack application implemented with ASP.NET Core 7 and Angular 16.
-It was developed as part of a technical assessment to demonstrate clean architecture, efficient data access, and client-side state management with NgRx.
+It was developed as part of a technical assessment to demonstrate clean architecture, efficient data access, and client-side state management.
 
 ---
 
@@ -12,7 +12,6 @@ It was developed as part of a technical assessment to demonstrate clean architec
 3. [Architecture](#architecture)
 4. [Prerequisites](#prerequisites)
 5. [Getting Started](#getting-started)
-
    * [Backend Setup](#backend-setup)
    * [Frontend Setup](#frontend-setup)
 6. [Database Migrations & Seeding](#database-migrations--seeding)
@@ -30,7 +29,6 @@ This application provides CRUD operations for managing Departments and Employees
 
 * A RESTful API with EF Core, Repository & Unit-of-Work patterns
 * FluentValidation-based input validation and global error handling middleware
-* Optimistic concurrency via EF Core `[Timestamp]` tokens
 * Angular 16 frontend with NgRx state management, entity adapters, and reactive forms
 
 ---
@@ -38,8 +36,10 @@ This application provides CRUD operations for managing Departments and Employees
 ## Tech Stack
 
 * **Backend**: .NET 7, ASP.NET Core 7.0, Entity Framework Core 7.0
+* **Backend Tools**: Automapper, JWT, Moq, Swagger, Serilog
 * **Database**: SQL Server 2022
 * **Frontend**: Angular 16, NgRx 16
+* **Frontend Tools**: NgRx, RxJs, LazyLoading, NgMaterial
 * **Testing**: xUnit for unit tests, Microsoft.AspNetCore.Mvc.Testing for integration tests
 
 ---
@@ -49,13 +49,14 @@ This application provides CRUD operations for managing Departments and Employees
 **Backend Layers**:
 
 * **Domain**: Entities and business rules
-* **Application**: DTOs and service interfaces
+* **Application**: DTOs, DTOs Mappings and interfaces
 * **Infrastructure**: EF Core `AppDbContext`, Repositories, Unit of Work, Services
-* **API**: Controllers, Middleware, DTO mapping
+* **API**: Controllers, Middleware, LoggerExtension
 
 **Frontend Structure**:
 
-* **Core**: Guards, Interceptors, Shared services
+* **Core**: Guards, Interceptors, Services
+* **Shared**: Shared components and models
 * **Feature Modules**: Departments module with components, state (`actions`, `reducers`, `effects`, `selectors`)
 * **State Management**: NgRx Entity Adapters for normalization
 
@@ -85,12 +86,11 @@ This application provides CRUD operations for managing Departments and Employees
    dotnet restore
    dotnet ef database update
    ```
-3. Configure connection string in `appsettings.json`:
+3. Configure connection string and JWT secret in `.env` file:
 
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=.;Database=HRManagement;Trusted_Connection=True;"
-   }
+   ```env
+   CONNECTION_STRING=Server=(localdb)\MSSQLLocalDB;Database=HRManagement;Trusted_Connection=True;TrustServerCertificate=True
+   JWT_SECRET=Any_JWT_Secret_with_512_bits_Any_JWT_Secret_with_512_bits_Any_JWT_Secret_with_512_bits
    ```
 
 ### Frontend Setup
@@ -105,7 +105,7 @@ This application provides CRUD operations for managing Departments and Employees
    ```bash
    npm install
    ```
-3. Update API base URL in `environment.ts` if needed.
+3. Update API base URL in `proxy.conf.json` if needed.
 
 ---
 
@@ -126,7 +126,7 @@ This application provides CRUD operations for managing Departments and Employees
 * **Backend**:
 
   ```bash
-  dotnet run --project HRManagement.Api
+  dotnet run --project HRManagement.Api --profile-settings https
   ```
 * **Frontend**:
 
@@ -138,39 +138,48 @@ This application provides CRUD operations for managing Departments and Employees
 
 ## API Documentation
 
-* Swagger is available at `https://localhost:<port>/swagger`.
+* Swagger is available at `https://localhost:<port>/swagger`. (Default port is 7269)
 
 * Endpoints:
+  * `GET /api/ping
+  * `POST /api/auth/login
 
-  * `GET /departments`
-  * `GET /departments/{id}`
-  * `POST /departments`
-  * `PUT /departments/{id}`
-  * `DELETE /departments/{id}`
-
-* Similar routes exist for `employees`.
+  * `GET /api/department`
+  * `GET /api/department/{id}`
+  * `POST /api/department`
+  * `PUT /api/department/{id}`
+  * `DELETE /api/department/{id}`
+  
+  * `GET /api/employee`
+  * `GET /api/employee/{id}`
+  * `POST /api/employee`
+  * `PUT /api/employee/{id}`
+  * `DELETE /api/employee/{id}`
 
 ---
 
 ## Testing
 
 * **Unit Tests**:
-
   ```bash
   dotnet test HRManagement.Tests/HRManagement.Tests.Domain
   ```
+  
 * **Integration Tests**:
-
   ```bash
   dotnet test HRManagement.Tests/HRManagement.Tests.Integration
   ```
-
+  
+* ** UI Tests (Karma)**:
+  ```bash
+  ng test
+  ```
+  
 ---
 
 ## Feature Highlights
 
 * **Global Error Handling**: Custom middleware returns consistent error responses
-* **Optimistic Concurrency**: `[Timestamp] RowVersion` properties and 409 Conflict handling
 * **Eager Loading**: Repository methods support `include` lambdas for related data
 * **NgRx Entity**: State normalization, caching, and reactive forms with real-time validation
 
@@ -182,14 +191,21 @@ This application provides CRUD operations for managing Departments and Employees
 
   * Connection string uses Windows Authentication
   * No external authentication currently (JWT ready in interceptor)
+  * Used EF 7.0.20 instead of 7.0.11 because it's the most current for .net 7
+  * AssemblyInfo on Domain for Tests
 
 * **Future Improvements**:
-
-  * Integrate Serilog for structured logging
-  * Implement client-side caching strategy or `ngrx-data`
+  * Optimistic Concurrency: `[Timestamp] RowVersion` properties and 409 Conflict handling to bulk updates
+  * New GetAll method for pagination `Task<ResultDto<PagedResult<EntityReturnDto>>> GetAllAsync(int pageNumber, int pageSize)`
+  * Implement RefreshToken for Auth persistency
   * Add more comprehensive Swagger XML comments
-  * Expand optimistic-concurrency to bulk updates
-  * Add UI theming and responsive layouts using Angular Material
+  * Segregate different environments  (appsettings.Development, Homologation and Production)
+  * Create docker-compose to host App
+  * Integrate ElasticSearch, Kibana and SqlServer services on docker-compose
+  * Backend `logs` endpoint to receive and store Frontend logs
+  * Add more UI Tests for Angular components
+  * Create filter on Data Lists
+  * Sync live data between clients connections with WebSockets
 
 ---
 
