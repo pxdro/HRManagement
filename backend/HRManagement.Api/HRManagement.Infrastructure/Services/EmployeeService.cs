@@ -25,7 +25,7 @@ namespace HRManagement.Infrastructure.Services
         {
             try
             {
-                var employees = await _unitOfWork.Employees.GetAllAsync(query => query.Include(e => e.Department));
+                var employees = await _unitOfWork.Employees.GetAllAsync(query => query.AsNoTracking().Include(e => e.Department));
                 return ResultDto<IEnumerable<EmployeeReturnDto>>.Success(
                     _mapper.Map<IEnumerable<EmployeeReturnDto>>(employees), 
                     HttpStatusCode.OK);
@@ -44,7 +44,7 @@ namespace HRManagement.Infrastructure.Services
         {
             try
             {
-                var employee = await _unitOfWork.Employees.GetByIdAsync(id, query => query.Include(e => e.Department));
+                var employee = await _unitOfWork.Employees.GetByIdAsync(id, query => query.AsNoTracking().Include(e => e.Department));
                 if (employee == null)
                     return ResultDto<EmployeeReturnDto>.Failure("Employee not found", HttpStatusCode.NotFound);
                 else

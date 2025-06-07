@@ -28,5 +28,11 @@ namespace HRManagement.Application.DTOs
 
         [Required]
         public Guid DepartmentId { get; set; }
+
+        /* For future
+         * Transaction Handling & Concurrency Management
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = null!;
+        */
     }
 }

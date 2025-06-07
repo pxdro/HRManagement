@@ -2,6 +2,8 @@
 using HRManagement.Domain.Entities;
 using HRManagement.Infrastructure.Context;
 using HRManagement.Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HRManagement.Infrastructure.UnitOfWork
 {
@@ -11,7 +13,6 @@ namespace HRManagement.Infrastructure.UnitOfWork
 
         public IRepository<Employee> Employees { get; }
         public IRepository<Department> Departments { get; }
-
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
@@ -27,5 +28,4 @@ namespace HRManagement.Infrastructure.UnitOfWork
             _context.Dispose();
         }
     }
-
 }

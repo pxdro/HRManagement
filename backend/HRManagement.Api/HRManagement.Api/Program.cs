@@ -133,6 +133,8 @@ try
     app.UseHttpsRedirection();
     app.UseSerilogRequestLogging();
 
+    app.UseMiddleware<ErrorHandlingMiddleware>();
+
     app.UseAuthentication();
     app.UseAuthorization();
 

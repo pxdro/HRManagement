@@ -1,4 +1,7 @@
 ﻿using HRManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System;
 
 namespace HRManagement.Application.Interfaces
 {

@@ -24,6 +24,9 @@ namespace HRManagement.Infrastructure.Context
                         v => v ? "true" : "false",
                         v => v == "true"
                     ).HasMaxLength(5);
+
+                // For future: Transaction Handling & Concurrency Management
+                //entity.Property(d => d.RowVersion).IsRowVersion();
             });
         }
     }

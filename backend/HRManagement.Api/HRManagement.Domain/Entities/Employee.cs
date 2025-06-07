@@ -31,10 +31,18 @@ namespace HRManagement.Domain.Entities
 
         public Department Department { get; internal set; } // Internal for tests
 
-        /* For future: RefreshToken
+
+        /* For future:
+         * RefreshToken
+         * 
         public string? RefreshToken { get; private set; }
 
         public DateTime? RefreshTokenExpiry { get; private set; }
+        
+         * Transaction Handling & Concurrency Management
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = null!;
+
         */
 
         public Employee(
