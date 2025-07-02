@@ -3,6 +3,7 @@ using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
 using HRManagement.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Net;
@@ -127,10 +128,10 @@ namespace HRManagement.Tests.Domain
         public async Task AddAsync_Success_ReturnsCreated()
         {
             // Arrange
-            var req = new DepartmentRequestDto { Name = "Legal", Description = "Legal Dept" };
+            var req = new DepartmentCreationRequestDto { Name = "Legal", Description = "Legal Dept" };
             _uowMock.Setup(u => u.Departments.AddAsync(It.IsAny<Department>()))
                 .Returns(Task.CompletedTask);
-            _uowMock.Setup(u => u.SaveChangesAsync())
+            _uowMock.Setup(u => u.CompleteAsync())
                 .ReturnsAsync(1);
 
             // Act
@@ -147,7 +148,7 @@ namespace HRManagement.Tests.Domain
         public async Task AddAsync_OnException_ReturnsFailure()
         {
             // Arrange
-            var req = new DepartmentRequestDto { Name = "Legal", Description = "Legal Dept" };
+            var req = new DepartmentCreationRequestDto { Name = "Legal", Description = "Legal Dept" };
             _uowMock.Setup(u => u.Departments.AddAsync(It.IsAny<Department>()))
                 .ThrowsAsync(new Exception());
 
@@ -174,11 +175,19 @@ namespace HRManagement.Tests.Domain
         {
             // Arrange
             var dept = CreateDepartment("Ops");
+            dept.RowVersion = new byte[] { 1, 2, 3, 4 }; // simula RowVersion existente
+
             _uowMock.Setup(u => u.Departments.GetByIdAsync(dept.Id, null))
                 .ReturnsAsync(dept);
-            _uowMock.Setup(u => u.SaveChangesAsync())
+            _uowMock.Setup(u => u.CompleteAsync())
                 .ReturnsAsync(1);
-            var req = new DepartmentRequestDto { Name = "Ops2", Description = "Operations 2" };
+
+            var req = new DepartmentUpdateRequestDto
+            {
+                Name = "Ops2",
+                Description = "Operations 2",
+                RowVersion = Convert.ToBase64String(dept.RowVersion)
+            };
 
             // Act
             var result = await _service.UpdateAsync(dept.Id, req);
@@ -196,7 +205,7 @@ namespace HRManagement.Tests.Domain
             var id = Guid.NewGuid();
             _uowMock.Setup(u => u.Departments.GetByIdAsync(id, null))
                 .ReturnsAsync((Department)null);
-            var req = new DepartmentRequestDto();
+            var req = new DepartmentUpdateRequestDto();
 
             // Act
             var result = await _service.UpdateAsync(id, req);
@@ -209,13 +218,40 @@ namespace HRManagement.Tests.Domain
         }
 
         [Fact]
+        public async Task UpdateAsync_AlreadyUpdated_ReturnsConflict()
+        {
+            // Arrange
+            var dept = CreateDepartment("Ops");
+            dept.RowVersion = new byte[] { 1, 2, 3, 4 };
+
+            _uowMock.Setup(u => u.Departments.GetByIdAsync(dept.Id, null)).ReturnsAsync(dept);
+            _uowMock.Setup(u => u.CompleteAsync())
+                .ThrowsAsync(new DbUpdateConcurrencyException());
+
+            var req = new DepartmentUpdateRequestDto
+            {
+                Name = "Ops2",
+                Description = "Operations 2",
+                RowVersion = Convert.ToBase64String(dept.RowVersion)
+            };
+
+            // Act
+            var result = await _service.UpdateAsync(dept.Id, req);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(HttpStatusCode.Conflict, result.StatusCode);
+            Assert.Contains("Concurrency conflict", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task DeleteAsync_Existing_ReturnsNoContent()
         {
             // Arrange
             var dept = CreateDepartment("R&D");
             _uowMock.Setup(u => u.Departments.GetByIdAsync(dept.Id, null))
                 .ReturnsAsync(dept);
-            _uowMock.Setup(u => u.SaveChangesAsync())
+            _uowMock.Setup(u => u.CompleteAsync())
                 .ReturnsAsync(1);
 
             // Act

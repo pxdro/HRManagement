@@ -66,7 +66,7 @@ namespace HRManagement.Tests.Integration
 
             /* Create */
             // Arrange
-            var createDto = new EmployeeRequestDto 
+            var createDto = new EmployeeCreationRequestDto 
             { 
                 Name = "Test Employee",
                 Email = "test@example.com",
@@ -89,7 +89,7 @@ namespace HRManagement.Tests.Integration
             /* Update */
             // Arrange
             var createdId = created.Data.Id;
-            var updateDto = new EmployeeRequestDto
+            var updateDto = new EmployeeCreationRequestDto
             {
                 Name = "Other Test Employee",
                 Email = "test@example.com",
@@ -143,7 +143,7 @@ namespace HRManagement.Tests.Integration
 
             /* Update */
             // Arrange
-            var dto = new EmployeeRequestDto
+            var dto = new EmployeeCreationRequestDto
             {
                 Name = "Test Employee",
                 Email = "test@example.com",

@@ -2,7 +2,7 @@
 
 namespace HRManagement.Application.DTOs
 {
-    public class EmployeeRequestDto
+    public class EmployeeUpdateRequestDto
     {
         [Required]
         [MaxLength(150)]
@@ -29,10 +29,7 @@ namespace HRManagement.Application.DTOs
         [Required]
         public Guid DepartmentId { get; set; }
 
-        /* For future
-         * Transaction Handling & Concurrency Management
-        [Timestamp]
-        public byte[] RowVersion { get; set; } = null!;
-        */
+        [Required]
+        public string RowVersion { get; set; }
     }
 }

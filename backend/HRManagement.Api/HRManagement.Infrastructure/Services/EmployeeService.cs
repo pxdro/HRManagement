@@ -62,7 +62,7 @@ namespace HRManagement.Infrastructure.Services
             }
         }
 
-        public async Task<ResultDto<EmployeeReturnDto>> AddAsync(EmployeeRequestDto employeeRequestDto)
+        public async Task<ResultDto<EmployeeReturnDto>> AddAsync(EmployeeCreationRequestDto employeeRequestDto)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace HRManagement.Infrastructure.Services
                     employeeRequestDto.DepartmentId
                 );
                 await _unitOfWork.Employees.AddAsync(employee);
-                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
 
                 return ResultDto<EmployeeReturnDto>.Success(
                     _mapper.Map<EmployeeReturnDto>(employee), 
@@ -93,7 +93,7 @@ namespace HRManagement.Infrastructure.Services
             }
         }
 
-        public async Task<ResultDto<EmployeeReturnDto>> UpdateAsync(Guid id, EmployeeRequestDto employeeRequestDto)
+        public async Task<ResultDto<EmployeeReturnDto>> UpdateAsync(Guid id, EmployeeUpdateRequestDto dto)
         {
             try
             {
@@ -101,23 +101,34 @@ namespace HRManagement.Infrastructure.Services
 
                 if (employee == null)
                     return ResultDto<EmployeeReturnDto>.Failure("Employee not found", HttpStatusCode.NotFound);
-                
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(employeeRequestDto.Password);
+
+                employee.RowVersion = Convert.FromBase64String(dto.RowVersion);
+
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
                 employee.Update(
-                    employeeRequestDto.Name,
-                    employeeRequestDto.Email,
+                    dto.Name,
+                    dto.Email,
                     hashedPassword,
-                    employeeRequestDto.Position,
-                    employeeRequestDto.HireDate,
-                    employeeRequestDto.IsAdmin,
-                    employeeRequestDto.DepartmentId
+                    dto.Position,
+                    dto.HireDate,
+                    dto.IsAdmin,
+                    dto.DepartmentId
                 );
+
                 _unitOfWork.Employees.Update(employee);
-                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
 
                 return ResultDto<EmployeeReturnDto>.Success(
-                    _mapper.Map<EmployeeReturnDto>(employee), 
-                    HttpStatusCode.OK);
+                    _mapper.Map<EmployeeReturnDto>(employee),
+                    HttpStatusCode.OK
+                );
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return ResultDto<EmployeeReturnDto>.Failure(
+                    "The record was modified by another user",
+                    HttpStatusCode.Conflict
+                );
             }
             catch (Exception ex)
             {
@@ -139,7 +150,7 @@ namespace HRManagement.Infrastructure.Services
                     return ResultDto<bool>.Failure("Employee not found", HttpStatusCode.NotFound);
 
                 _unitOfWork.Employees.Delete(employee);
-                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
 
                 return ResultDto<bool>.Success(true, HttpStatusCode.NoContent);
             }

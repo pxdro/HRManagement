@@ -16,6 +16,8 @@
 
         public Guid DepartmentId { get; set; }
 
+        public string RowVersion { get; set; }
+
         public DepartmentReturnDto Department { get; set; }
     }
 }

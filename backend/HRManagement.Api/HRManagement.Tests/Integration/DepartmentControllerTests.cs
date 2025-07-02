@@ -54,7 +54,7 @@ namespace HRManagement.Tests.Integration
 
             /* Create */
             // Arrange
-            var createDto = new DepartmentRequestDto { Name = "Test Department" };
+            var createDto = new DepartmentCreationRequestDto { Name = "Test Department" };
             var content = JsonContent.Create(createDto);
 
             // Act
@@ -68,7 +68,7 @@ namespace HRManagement.Tests.Integration
             /* Update */
             // Arrange
             var createdId = created.Data.Id;
-            var updateDto = new DepartmentRequestDto { Name = "Updated Department" };
+            var updateDto = new DepartmentCreationRequestDto { Name = "Updated Department" };
 
             // Act
             var updateResponse = await _client.PutAsJsonAsync($"/api/department/{createdId}", updateDto);
@@ -111,7 +111,7 @@ namespace HRManagement.Tests.Integration
 
             /* Update */
             // Arrange
-            var updateDto = new DepartmentRequestDto { Name = "Updated Department" };
+            var updateDto = new DepartmentCreationRequestDto { Name = "Updated Department" };
 
             // Act
             var updateResponse = await _client.PutAsJsonAsync($"/api/department/{invalidId}", updateDto);

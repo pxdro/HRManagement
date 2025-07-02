@@ -3,6 +3,7 @@ using HRManagement.Application.DTOs;
 using HRManagement.Application.Interfaces;
 using HRManagement.Domain.Entities;
 using HRManagement.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Net;
@@ -151,9 +152,9 @@ namespace HRManagement.Tests.Domain
             // Arrange
             var emp = CreateEmployee();
             _uowMock.Setup(u => u.Employees.AddAsync(It.IsAny<Employee>())).Returns(Task.CompletedTask);
-            _uowMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+            _uowMock.Setup(u => u.CompleteAsync()).ReturnsAsync(1);
 
-            var req = new EmployeeRequestDto { 
+            var req = new EmployeeCreationRequestDto { 
                 Name = "Pedro", 
                 Email = "pedro@test.com", 
                 Password = "AnyPass123", 
@@ -180,17 +181,22 @@ namespace HRManagement.Tests.Domain
         {
             // Arrange
             var emp = CreateEmployee();
-            _uowMock.Setup(u => u.Employees.GetByIdAsync(emp.Id, null)).ReturnsAsync(emp);
-            _uowMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+            emp.RowVersion = new byte[] { 1, 2, 3, 4 };
 
-            var req = new EmployeeRequestDto { 
-                Name = "Pedro2", 
-                Email = "pedro@test.com", 
-                Password = "AnyPass123", 
-                Position = "Software Engineer", 
-                HireDate = DateTime.UtcNow.AddYears(-1), 
-                IsAdmin = true, 
-                DepartmentId = emp.Department.Id };
+            _uowMock.Setup(u => u.Employees.GetByIdAsync(emp.Id, null)).ReturnsAsync(emp);
+            _uowMock.Setup(u => u.CompleteAsync()).ReturnsAsync(1);
+
+            var req = new EmployeeUpdateRequestDto
+            {
+                Name = "Pedro2",
+                Email = "pedro@test.com",
+                Password = "AnyPass123",
+                Position = "Software Engineer",
+                HireDate = DateTime.UtcNow.AddYears(-1),
+                IsAdmin = true,
+                DepartmentId = emp.Department.Id,
+                RowVersion = Convert.ToBase64String(emp.RowVersion)
+            };
 
             // Act
             var result = await _service.UpdateAsync(emp.Id, req);
@@ -210,7 +216,7 @@ namespace HRManagement.Tests.Domain
             var id = Guid.NewGuid();
             _uowMock.Setup(u => u.Employees.GetByIdAsync(id, null)).ReturnsAsync((Employee)null);
 
-            var req = new EmployeeRequestDto();
+            var req = new EmployeeUpdateRequestDto();
 
             // Act
             var result = await _service.UpdateAsync(id, req);
@@ -224,12 +230,45 @@ namespace HRManagement.Tests.Domain
         }
 
         [Fact]
+        public async Task UpdateAsync_AlreadyUpdated_ReturnsConflict()
+        {
+            // Arrange
+            var emp = CreateEmployee();
+            emp.RowVersion = new byte[] { 1, 2, 3, 4 };
+
+            _uowMock.Setup(u => u.Employees.GetByIdAsync(emp.Id, null)).ReturnsAsync(emp);
+            _uowMock.Setup(u => u.CompleteAsync())
+                .ThrowsAsync(new DbUpdateConcurrencyException());
+
+            var req = new EmployeeUpdateRequestDto
+            {
+                Name = "Pedro2",
+                Email = "pedro@test.com",
+                Password = "AnyPass123",
+                Position = "Software Engineer",
+                HireDate = DateTime.UtcNow.AddYears(-1),
+                IsAdmin = true,
+                DepartmentId = emp.Department.Id,
+                RowVersion = Convert.ToBase64String(emp.RowVersion)
+            };
+
+            // Act
+            var result = await _service.UpdateAsync(emp.Id, req);
+
+            // Assert
+            Assert.False(result.IsSuccess);
+            Assert.Equal(HttpStatusCode.Conflict, result.StatusCode);
+            Assert.Contains("Concurrency conflict", result.ErrorMessage);
+            Assert.Null(result.Data);
+        }
+
+        [Fact]
         public async Task DeleteAsync_Existing_ReturnsNoContent()
         {
             // Arrange
             var emp = new Employee("Pedro", "pedro@test.com", "H4sh3DP@ss!", "Software Engineer", DateTime.UtcNow.AddYears(-1), true, Guid.NewGuid());
             _uowMock.Setup(u => u.Employees.GetByIdAsync(emp.Id, null)).ReturnsAsync(emp);
-            _uowMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+            _uowMock.Setup(u => u.CompleteAsync()).ReturnsAsync(1);
 
             // Act
             var result = await _service.DeleteAsync(emp.Id);

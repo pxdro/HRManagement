@@ -9,6 +9,6 @@ namespace HRManagement.Application.Interfaces
     {
         IRepository<Employee> Employees { get; }
         IRepository<Department> Departments { get; }
-        Task<int> SaveChangesAsync();
+        Task<int> CompleteAsync();
     }
 }

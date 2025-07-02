@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace HRManagement.Infrastructure.Services
@@ -45,7 +46,13 @@ namespace HRManagement.Infrastructure.Services
                     return ResultDto<TokensDto>.Failure("Invalid credentials", HttpStatusCode.Unauthorized);
 
                 var token = GenerateToken(user);
-                return ResultDto<TokensDto>.Success(new TokensDto { AuthToken = token }, HttpStatusCode.OK);
+                var refreshToken = GenerateRefreshToken();
+                var refreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+
+                user.SetRefreshToken(refreshToken, refreshTokenExpiry);
+                await _unitOfWork.CompleteAsync(); // Salva no banco
+
+                return ResultDto<TokensDto>.Success(new TokensDto { AuthToken = token, RefreshToken = refreshToken }, HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
@@ -80,5 +87,12 @@ namespace HRManagement.Infrastructure.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        private string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomBytes);
+            return Convert.ToBase64String(randomBytes);
+        }
     }
 }

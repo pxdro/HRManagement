@@ -62,13 +62,13 @@ namespace HRManagement.Infrastructure.Services
             }
         }
 
-        public async Task<ResultDto<DepartmentReturnDto>> AddAsync(DepartmentRequestDto departmentDto)
+        public async Task<ResultDto<DepartmentReturnDto>> AddAsync(DepartmentCreationRequestDto departmentDto)
         {
             try
             {
                 var department = new Department(departmentDto.Name, departmentDto.Description);
                 await _unitOfWork.Departments.AddAsync(department);
-                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
                 return ResultDto<DepartmentReturnDto>.Success(
                     _mapper.Map<DepartmentReturnDto>(department),
                     HttpStatusCode.Created);
@@ -83,7 +83,7 @@ namespace HRManagement.Infrastructure.Services
             }
         }
 
-        public async Task<ResultDto<DepartmentReturnDto>> UpdateAsync(Guid id, DepartmentRequestDto departmentDto)
+        public async Task<ResultDto<DepartmentReturnDto>> UpdateAsync(Guid id, DepartmentUpdateRequestDto departmentDto)
         {
             try
             {
@@ -92,13 +92,22 @@ namespace HRManagement.Infrastructure.Services
                 if (department == null)
                     return ResultDto<DepartmentReturnDto>.Failure("Department not found", HttpStatusCode.NotFound);
 
+                department.RowVersion = Convert.FromBase64String(departmentDto.RowVersion);
+
                 department.Update(departmentDto.Name, departmentDto.Description);
                 _unitOfWork.Departments.Update(department);
-                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
 
                 return ResultDto<DepartmentReturnDto>.Success(
                     _mapper.Map<DepartmentReturnDto>(department),
                     HttpStatusCode.OK);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return ResultDto<DepartmentReturnDto>.Failure(
+                    "The record was modified by another user",
+                    HttpStatusCode.Conflict
+                );
             }
             catch (Exception ex)
             {
@@ -120,7 +129,7 @@ namespace HRManagement.Infrastructure.Services
                     return ResultDto<bool>.Failure("Department not found", HttpStatusCode.NotFound);
 
                 _unitOfWork.Departments.Delete(department);
-                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
 
                 return ResultDto<bool>.Success(true, HttpStatusCode.NoContent);
             }

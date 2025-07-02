@@ -48,7 +48,7 @@ namespace HRManagement.Api.Controllers
         [ProducesResponseType(typeof(ResultDto<DepartmentReturnDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResultDto<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<string>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] DepartmentRequestDto dto)
+        public async Task<IActionResult> Create([FromBody] DepartmentCreationRequestDto dto)
         {
             _logger.LogInformation($"POST {nameof(Create)} called");
             var result = await _service.AddAsync(dto);
@@ -61,8 +61,9 @@ namespace HRManagement.Api.Controllers
         [ProducesResponseType(typeof(ResultDto<DepartmentReturnDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResultDto<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ResultDto<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ResultDto<string>), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ResultDto<string>), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(Guid id, [FromBody] DepartmentRequestDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] DepartmentUpdateRequestDto dto)
         {
             _logger.LogInformation($"PUT {nameof(Update)} called");
             var result = await _service.UpdateAsync(id, dto);

@@ -8,8 +8,10 @@ namespace HRManagement.Application.Profiles
     {
         public MapperProfile()
         {
-            CreateMap<Department, DepartmentReturnDto>();
-            CreateMap<Employee, EmployeeReturnDto>();
+            CreateMap<Department, DepartmentReturnDto>()
+                .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.ToBase64String(src.RowVersion)));
+            CreateMap<Employee, EmployeeReturnDto>()
+                .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.ToBase64String(src.RowVersion)));
         }
     }
 }

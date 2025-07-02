@@ -19,14 +19,13 @@ namespace HRManagement.Infrastructure.Context
                 entity.HasIndex(u => u.Email).IsUnique();
 
                 entity.Property(p => p.IsAdmin)
-                    /* Convert from bit to string */
                     .HasConversion(
                         v => v ? "true" : "false",
                         v => v == "true"
                     ).HasMaxLength(5);
 
-                // For future: Transaction Handling & Concurrency Management
-                //entity.Property(d => d.RowVersion).IsRowVersion();
+                entity.HasIndex(d => d.Name)
+                      .HasDatabaseName("IX_Employees_Name");
             });
         }
     }

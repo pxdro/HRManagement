@@ -29,21 +29,12 @@ namespace HRManagement.Domain.Entities
         [Required]
         public Guid DepartmentId { get; private set; }
 
-        public Department Department { get; internal set; } // Internal for tests
+        public Department Department { get; internal set; }
 
-
-        /* For future:
-         * RefreshToken
-         * 
+        // Refresh Token
+        [MaxLength(100)]
         public string? RefreshToken { get; private set; }
-
-        public DateTime? RefreshTokenExpiry { get; private set; }
-        
-         * Transaction Handling & Concurrency Management
-        [Timestamp]
-        public byte[] RowVersion { get; set; } = null!;
-
-        */
+        public DateTime? RefreshTokenExpiryTime { get; private set; }
 
         public Employee(
             string name,
@@ -80,6 +71,17 @@ namespace HRManagement.Domain.Entities
             IsAdmin = isAdmin;
             DepartmentId = departmentId;
         }
-    }
 
+        public void SetRefreshToken(string token, DateTime expiry)
+        {
+            RefreshToken = token;
+            RefreshTokenExpiryTime = expiry;
+        }
+
+        public void RevokeRefreshToken()
+        {
+            RefreshToken = null;
+            RefreshTokenExpiryTime = null;
+        }
+    }
 }

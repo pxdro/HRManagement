@@ -5,11 +5,10 @@ namespace HRManagement.Application.DTOs
     public class TokensDto
     {
         [Required]
-        public string? AuthToken { get; set; }
+        public string AuthToken { get; set; } = null!;
 
-        /* For future: RefreshToken
         [Required]
-        public string? RefreshToken { get; set; }
-        */
+        [MaxLength(100)]
+        public string RefreshToken { get; set; } = null!;
     }
 }
